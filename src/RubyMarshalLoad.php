@@ -24,7 +24,7 @@ class RubyMarshalLoad
         $input = unpack('C*', $content);
         list($major, $minor) = array_slice($input,0,2);
         if ($major != self::MARSHAL_MAJOR || $minor != self::MARSHAL_MINOR)
-            throw(new SdyException("Invalid binary file"));
+            throw(new RubyMarshalException("Invalid binary file"));
         $input = array_slice($input,2,count($input));
         $symbols = [];
         return $this->identifyNextToken($input,$symbols);
@@ -74,7 +74,7 @@ class RubyMarshalLoad
                     case self::MARSHAL_IVAR_STR:
                         return self::parseString($buffer);
                     default:
-                        throw new SdyException('Unrecognised instance variable type' .
+                        throw new RubyMarshalException('Unrecognised instance variable type' .
                             '(instance variables currently can only be strings)');
                 }
             case self::MARSHAL_ARRAY:
@@ -96,7 +96,7 @@ class RubyMarshalLoad
                 }
                 return $hashOut;
             default:
-                throw new SdyException('Unexpected data, value ' .
+                throw new RubyMarshalException('Unexpected data, value ' .
                     $buffer[self::$offset] .
                     ' at offset ' . self::$offset .
                     ' on buffer. ' .
@@ -119,7 +119,7 @@ class RubyMarshalLoad
         } else if(!isset($buffer[self::$offset + 1])) {
 
         } else {
-            throw new SdyException('String not terminated with encoding symbol (expected 3a or 3b, got ' .
+            throw new RubyMarshalException('String not terminated with encoding symbol (expected 3a or 3b, got ' .
                 $buffer[self::$offset + 1] . '), not sure what to do');
         }
         return Helper::binToString($tempBuf);

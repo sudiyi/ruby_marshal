@@ -1,10 +1,10 @@
 {
-  "name": "sudiyi/sudiyi-ruby-marshal",
-  "description": "Sudiyi Open Platform SDK for PHP",
-  "homepage": "http://open.sudiyi.cn/",
+  "name": "sudiyi/ruby-marshal",
+  "description": "我还没想好",
+  "homepage": "https://github.com/sudiyi/ruby_marshal",
   "type": "library",
   "license": "MIT",
-  "keywords": ["marshal"],
+  "keywords": ["marshal", "ruby"],
   "authors": [
     {
       "name": "Sudiyi"

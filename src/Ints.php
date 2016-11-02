@@ -59,7 +59,7 @@ class Ints
             case 5:
                 return self::readUInt32LE($buffer,1);
             default:
-                throw new SdyException('This is not an int');
+                throw new RubyMarshalException('This is not an int');
         }
     }
 

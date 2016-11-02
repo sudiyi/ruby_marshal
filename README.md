@@ -35,25 +35,25 @@
 |   |-- Helper.php          帮助类
 |   |-- Ints.php            辅助类
 |   |-- RubyMarshalLoad.php 主程序类
-|   `-- SdyException.php    异常类
+|   `-- RubyMarshalException.php    异常类
 |-- autoload.php            PSR-4 自动加载
 `-- composer.json
 ```
 
 ### 异常处理
 
-SDK 执行过程中若遇到异常，将会抛出一个 SdyException 异常，用户可自行捕获并处理。
+SDK 执行过程中若遇到异常，将会抛出一个 RubyMarshalException 异常，用户可自行捕获并处理。
 
 ```php
 use SuDiYi\RubyMarshal\RubyMarshalLoad;
 use SuDiYi\RubyMarshal\UnEscape;
-use SuDiYi\RubyMarshal\SdyException
+use SuDiYi\RubyMarshal\RubyMarshalException
 
 try {
     $rubyMarshalLoad = new RubyMarshalLoad();
     $content = 'marshal-str'
     $arr = $rubyMarshalLoad->load($content);
-} catch (SdyException $e) {
+} catch (RubyMarshalException $e) {
     echo "============== ERROR ==============\n";
     echo $e->getMessage() . "\n";
     var_dump($e->getErrorBody());
