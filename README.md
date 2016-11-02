@@ -67,7 +67,7 @@ try {
 
 ## 问题反馈
 
-Goto: [ISSUES](https://github.com/sudiyi/sudiyi-open-php-sdk/issues)
+Goto: [ISSUES](https://github.com/sudiyi/ruby_marshal/issues)
 
 ## 开源协议
 
