@@ -1,5 +1,5 @@
 <?php
-namespace SuDiYi\RubyMarshal;
+namespace Sudiyi\RubyMarshal;
 
 class SdyException extends \Exception
 {
