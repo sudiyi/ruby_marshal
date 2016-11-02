@@ -1,0 +1,22 @@
+{
+  "name": "sudiyi/sudiyi-ruby-marshal",
+  "description": "Sudiyi Open Platform SDK for PHP",
+  "homepage": "http://open.sudiyi.cn/",
+  "type": "library",
+  "license": "MIT",
+  "keywords": ["marshal"],
+  "authors": [
+    {
+      "name": "Sudiyi"
+    }
+  ],
+  "require": {
+    "php":">=5.4"
+  },
+  "minimum-stability": "stable",
+  "autoload": {
+    "psr-4": {
+      "SuDiYi\\RubyMarshal\\": "src/"
+    }
+  }
+}
