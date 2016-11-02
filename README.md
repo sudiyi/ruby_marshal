@@ -12,12 +12,12 @@
 
 1. 如果您通过composer管理您的项目依赖，可以在你的项目根目录运行：
 
-        $ composer require sudiyi/sudiyi-ruby-marshal
+        $ composer require sudiyi/ruby-marshal
 
    或者在你的`composer.json`中声明对速递易开放平台 SDK 的依赖：
 
         "require": {
-            "sudiyi/sudiyi-open-php-sdk": "~1.0"
+            "sudiyi/ruby-marshal": "~1.0"
         }
 
    然后通过`composer install`安装依赖。
