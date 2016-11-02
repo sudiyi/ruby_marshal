@@ -1,6 +1,6 @@
 {
   "name": "sudiyi/ruby-marshal",
-  "description": "我还没想好",
+  "description": "ruby-marshal for PHP",
   "homepage": "https://github.com/sudiyi/ruby_marshal",
   "type": "library",
   "license": "MIT",
@@ -16,7 +16,7 @@
   "minimum-stability": "stable",
   "autoload": {
     "psr-4": {
-      "SuDiYi\\RubyMarshal\\": "src/"
+      "Sudiyi\\RubyMarshal\\": "src/"
     }
   }
 }
