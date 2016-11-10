@@ -1,11 +1,14 @@
 <?php
-require getcwd() . '/autoload.php';
+require __DIR__ . '/../autoload.php';
 use Sudiyi\RubyMarshal\RubyMarshalLoad;
 use Sudiyi\RubyMarshal\UnEscape;
 
-$data = 'BAhbCUkiAAY6BkVUaRFJIglzZHNhBjsAVGkX%0A';
-$data = UnEscape::toUnEscape($data);
 $rubyMarshalLoad = new RubyMarshalLoad();
-$content = base64_decode($data);
+
+$arr = [ 'aa', 'bb', 'bb', 'cc' ];
+$dumpStr = $rubyMarshalLoad->dump($arr);
+$base = \Sudiyi\RubyMarshal\Helper::binToString($dumpStr);
+$encodeStr =  base64_encode($base);
+$content = base64_decode($encodeStr);
 $arr = $rubyMarshalLoad->load($content);
 print_r($arr);

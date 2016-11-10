@@ -63,6 +63,84 @@ class Ints
         }
     }
 
+    public static function dump($input)
+    {
+        if($input == 0 ) return [0];
+        if($input > 0){
+            if($input > 0) {
+                if($input < 123) {
+                    return [$input + 5];
+                } else if($input < 256) {
+                    return [1, $input];
+                } else if($input < 65536) {
+                    $unsignedInt = [0xFF,0xFF];
+                    $unsignedInt = self::writeUInt16LE($unsignedInt,$input, 0);
+                    return array_merge([2], $unsignedInt);
+                } else if ($input < 16777216) {
+                    $unsignedInt = [0xFF,0xFF,0xFF,0xFF];;
+                    $unsignedInt = self::writeUInt32LE($unsignedInt,$input, 0);
+                    return array_merge([3],array_slice($unsignedInt,0,count($unsignedInt)));
+                } else {
+                    $unsignedInt = [0xFF,0xFF,0xFF,0xFF];;
+                    $unsignedInt = self::writeUInt32LE($unsignedInt,$input, 0);
+                    return array_merge([4],$unsignedInt);
+                  }
+            } else {
+                if($input > -124) {
+                    return [$input - 5];
+                } else if($input > -257) {
+                    return [255,$input];
+                } else if($input > -65537) {
+                    $unsignedInt = [0xFF,0xFF];
+                    $unsignedInt = self::writeUInt16LE($unsignedInt,65536 - abs($input), 0);
+                    return array_merge([254,$unsignedInt]);
+                } else if ($input > -16777217) {
+                    $unsignedInt = [0xFF,0xFF,0xFF,0xFF];
+                    $unsignedInt = self::writeUInt32LE($unsignedInt,16777216 - abs($input), 0);
+                    array_merge([253],array_slice($unsignedInt,0,count($unsignedInt)));
+                } else {
+                    $unsignedInt = [0xFF,0xFF,0xFF,0xFF];
+                    $unsignedInt = self::writeUInt32LE($unsignedInt, 4294967296 - abs($input), 0);
+                    return array_merge([252],$unsignedInt);
+                }
+            }
+        }
+        return [];
+    }
+
+    protected static function initBuffer(&$buffer)
+    {
+        array_walk($buffer,function(&$value,$key){
+            $value = $key == 0 ? 0x01 : 0;
+        });
+    }
+
+    protected static function writeUInt16LE($buffer,$input,$offset)
+    {
+        self::initBuffer($buffer);
+        $lowBit = 0x00FF & $input;
+        $highBit = 0xFF00 & $input;
+        $buffer[$offset] = $lowBit;
+        $buffer[$offset + 1] = $highBit;
+        return $buffer;
+    }
+
+    protected static function writeUInt32LE($buffer,$input,$offset)
+    {
+        for($i = 0;  $i <= 3 ;$i ++){
+            $leftBit = (8 * $i);
+            $bit = ( 0xFF << $leftBit ) & $input;
+            $bit = $bit >> $leftBit;
+            if( ! isset($buffer[$offset + $i])){
+                throw new RubyMarshalException('RangeError: Index out of range');
+            }
+            $buffer[$offset + $i] = $bit;
+        }
+        return $buffer;
+    }
+
+
+
     protected static function readUInt8($buffer,$offset)
     {
         $bit = $buffer[$offset];

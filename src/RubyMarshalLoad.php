@@ -19,6 +19,7 @@ class RubyMarshalLoad
     const MARSHAL_FLOAT = 'f';
 
     static protected $offset = 0;
+    static protected $stringEncodingOffset;
 
     public function load($content) {
         $input = unpack('C*', $content);
@@ -29,7 +30,8 @@ class RubyMarshalLoad
         $symbols = [];
         return $this->identifyNextToken($input,$symbols);
     }
-    public function identifyNextToken($buffer, &$symbols) {
+
+    protected function identifyNextToken($buffer, &$symbols) {
         $type = pack('C',$buffer[self::$offset]);
         switch ($type) {
             case self::MARSHAL_TRUE:
@@ -124,4 +126,102 @@ class RubyMarshalLoad
         }
         return Helper::binToString($tempBuf);
     }
+
+    public function dump($value)
+    {
+        $buffer = [self::MARSHAL_MAJOR,self::MARSHAL_MINOR];
+        $buffer = array_merge($buffer, $this->dumpValue($value));
+        $arr = [];
+        array_walk_recursive($buffer,function (&$v) use(&$arr){
+            $arr[] = $v;
+        });
+        return $arr;
+    }
+
+    protected function dumpValue($value)
+    {
+        if(is_bool($value) && $value == true) return [self::MARSHAL_TRUE];
+        if(is_bool($value) && $value == false) return [self::MARSHAL_FALSE];
+        if(is_numeric($value)){
+            if($value == round($value)){
+                if($value == INF){
+                    $str = 'inf';
+                    $arr = array_merge(
+                        unpack("C*",self::MARSHAL_FLOAT),
+                        Ints::dump(strlen($str)),
+                        unpack('C*',$str)
+                    );
+                    return $arr;
+                } else if($value == -INF){
+                    $str = '-inf';
+                    $arr = array_merge(
+                        unpack("C*",self::MARSHAL_FLOAT),
+                        Ints::dump(strlen($str)),
+                        unpack('C*',$str)
+                    );
+                    return $arr;
+                } else {
+                    return array_merge(
+                        unpack("C*",self::MARSHAL_INT),
+                        Ints::dump($value)
+                    );
+                }
+            } else {
+                $str = Helper::binToString($value);
+                $arr = array_merge(
+                    unpack("C*",self::MARSHAL_FLOAT),
+                    Ints::dump(strlen($str)),
+                    unpack("C*",$str)
+                );
+                return $arr;
+            }
+        }
+
+        if(is_string($value)){
+            $ascii = unpack("C*",self::MARSHAL_IVAR_STR);
+            $ascii = array_pop($ascii);
+            return self::iVar($ascii,$value);
+        }
+        
+        if(is_array($value)){
+            $arr = array_merge(
+                unpack("C*",self::MARSHAL_ARRAY),
+                Ints::dump(count($value)),
+                array_map(function($item){
+                    return self::dumpValue($item);
+                },$value)
+            );
+            return $arr;
+        }
+
+        if(is_object($value)){
+            throw new RubyMarshalException('Not Support PHP object to ruby marshal');;
+        }
+
+        return unpack("C*",self::MARSHAL_NULL);
+    }
+
+    protected function iVar($type,$value)
+    {
+        if(self::$stringEncodingOffset) {
+            $ascii = unpack("C*",self::MARSHAL_SYM_REF);
+            $ascii = array_pop($ascii);
+            $trail = [6, $ascii, 00, 84];
+        } else {
+            $ascii = unpack("C*",self::MARSHAL_SYM);
+            $ascii = array_pop($ascii);
+            $trail = [6, $ascii, 06, 69, 84];
+            self::$stringEncodingOffset = true;
+        }
+
+        $arr = array_merge(
+            unpack("C*",self::MARSHAL_INSTANCEVAR),
+            [$type],
+            [strlen($value) + 5],
+            unpack("C*",$value),
+            $trail
+            );
+        return $arr;
+    }
+
 }
